@@ -27,18 +27,17 @@ const createRecord = () => {
   }
 }
 
-const findRandomDoc = async () => {
-
-  const count = await User.countDocuments();
-  console.log(count)
+const findRandomDoc = async (model) => {
+  
+  const count = await model.countDocuments();
   const randomIndex = chance.integer({ min: 0, max: count - 1 });
   return model.findOne().skip(randomIndex);
 }
 
 const createOrder = async () => {
 
-  const randomUser = await findRandomDoc();
-  /* const randomRecord = await findRandomDoc(Record); */
+  const randomUser = await findRandomDoc(User);
+  const randomRecord = await findRandomDoc(Record);
   return{
     username: randomUser.username, 
     recordstitle: randomRecord.title,
