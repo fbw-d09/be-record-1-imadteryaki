@@ -1,14 +1,12 @@
 const mongoose = require("mongoose");
-const random = require("mongoose-random"); 
 const Chance = require("chance");
 const { User } = require("./models/userSchema");
 const { Record } = require("./models/recordSchema");
 const { Order } = require("./models/orderSchema");
 const {connect, closeConnection} = require ("./configs/db")
- require('dotenv').config();
 const chance = new Chance();
 
-
+require('dotenv').config();
 
 const createUser = () => {
   return {
@@ -22,7 +20,6 @@ const createUser = () => {
 };
 
 const createRecord = () => {
-  
   return {
     title: chance.sentence({ words: 3}),
     artist: `${chance.first()} ${chance.last()}`,
@@ -30,11 +27,18 @@ const createRecord = () => {
   }
 }
 
-const createOrder = (user,record) => {
-  const randomUser =  user
-  
-  const randomRecord = record
+const findRandomDoc = async () => {
 
+  const count = await User.countDocuments();
+  console.log(count)
+  const randomIndex = chance.integer({ min: 0, max: count - 1 });
+  return model.findOne().skip(randomIndex);
+}
+
+const createOrder = async () => {
+
+  const randomUser = await findRandomDoc();
+  /* const randomRecord = await findRandomDoc(Record); */
   return{
     username: randomUser.username, 
     recordstitle: randomRecord.title,
@@ -44,8 +48,8 @@ const createOrder = (user,record) => {
 
 
 const seedDatabase = async () => {
-  connect();
-  
+ await connect();
+ 
   await User.insertMany([
     createUser(),
     createUser(),
@@ -53,11 +57,11 @@ const seedDatabase = async () => {
     createUser(),
     createUser(),
     createUser(),
-      createUser(),
-      createUser(),
-      createUser(),
-      createUser(),
-      createUser()
+    createUser(),
+    createUser(),
+    createUser(),
+    createUser(),
+    createUser()
     ])
     .then (()=> console.log("User's Database seeded successfully.")) 
    .catch (err => {
@@ -84,33 +88,37 @@ const seedDatabase = async () => {
     createRecord(),
     createRecord(),
   ])
-  .then(()=> console.log('Records Database seeded successfully'))
+  .then(()=> console.log("Record's Database seeded successfully"))
   .catch(err => console.log(err.message));
 
 
   await Order.insertMany([
-    createOrder(User,Record),
-    createOrder(User,Record),
-    createOrder(User,Record),
-    createOrder(User,Record),
-    createOrder(User,Record),
-    createOrder(User,Record),
-    createOrder(User,Record),
-    createOrder(User,Record),
-    createOrder(User,Record),
-    createOrder(User,Record),
-    createOrder(User,Record),
-    createOrder(User,Record),
-    createOrder(User,Record),
-    createOrder(User,Record),
-    createOrder(User,Record),
+    createOrder(),
+    createOrder(),
+    createOrder(),
+    createOrder(),
+    createOrder(),
+    createOrder(),
+    createOrder(),
+    createOrder(),
+    createOrder(),
+    createOrder(),
+    createOrder(),
+    createOrder(),
+    createOrder(),
+    createOrder(),
+    createOrder(),
+    createOrder(),
+    createOrder(),
    
   ])
-  .then(()=> console.log('Orders database deeded successfully'))
+  .then(()=> console.log("Order's database deeded successfully"))
   .catch((err)=> console.log(err.message));
 
 
   await closeConnection();
+  
+  
 };
 
 seedDatabase();

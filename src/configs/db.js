@@ -12,4 +12,4 @@ exports.connect = async () =>
     }
 }
 
-exports.closeConnection = () => mongoose.connection.close();
+exports.closeConnection = () => process.exit(0);
