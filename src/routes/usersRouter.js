@@ -3,8 +3,8 @@ const router = express.Router();
 const userController = require('../controller/userController');
 
 router.route('/')
-.get(userController.getUsers)
 .post(userController.createUser)
+.get(userController.getUsers)
 
 router.route('/:id')
 .get(userController.getUserById)

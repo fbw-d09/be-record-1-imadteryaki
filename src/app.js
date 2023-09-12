@@ -4,12 +4,11 @@
 const dotenv = require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
+const mongoose = require("mongoose");
+
 
 const app = express();
-const adapter = new FileSync ('db.json');
-const db = low(adapter);
+
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -31,7 +30,7 @@ app.post('/api/records',(req,res) => {
 
 // Teil 2 Middleware  
 
-const {meineMiddleware} = require('./middleware/meineMiddelware');
+/* const {meineMiddleware} = require('./middleware/meineMiddelware');
 
 app.use(meineMiddleware)
 
@@ -44,14 +43,13 @@ app.post("/middleware", (req,res) =>{
     console.log('ich bin post middleware');
     res.status(201).send('Ich bin post middleware');
 })
-
+*/
 // Teil 3 Routes 
-
-const productsRouter = require('./routes/productsRouter');
+const recordsRouter = require('./routes/recordsRouter');
 const usersRouter = require('./routes/usersRouter');
 const ordersRouter = require('./routes/ordersRouter');
 
-app.use('/records', productsRouter);
+app.use('/records', recordsRouter);
 app.use('/users', usersRouter);
 app.use('/orders', ordersRouter);
 
@@ -71,6 +69,18 @@ app.use((error, req, res, next) => {
 });
 
 const PORT = process.env.PORT;
+
+connect = async () =>
+{
+    try {
+        const conn = await mongoose.connect("mongodb://localhost:27017/records");
+
+        console.log(`MongoDB is connected on ${conn.connection.host}`);
+    } catch (error) {
+        console.log(error);
+    }
+}
+connect();
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
